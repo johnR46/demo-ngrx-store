@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Todo } from 'src/app/core/types/todo';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,7 @@ export class TodoService {
       observer.complete();
     });
     // return this.http.post<Todo>(this.url + '/create', value);
+    // return of({ code: value.code, name: value.name, type: value.type });
   }
 
   search(val): Observable<Todo[]> {
