@@ -1,0 +1,17 @@
+<div>
+  <form [formGroup]="searchForm" fxLayout="row" fxFlex>
+    <mat-form-field fxFlex="33.33">
+      <input matInput placeholder="ชื่อรายการ" formControlName="name" />
+    </mat-form-field>
+
+    <div fxFlex="33.33"></div>
+    <div fxFlex="33.33"></div>
+  </form>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="6px">
+  <button mat-raised-button color="primary" (click)="toSearch()">
+    ค้นหา
+  </button>
+  <button mat-raised-button (click)="toClear()">รีเซ็ต</button>
+</div>

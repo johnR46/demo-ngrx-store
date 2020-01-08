@@ -1,0 +1,15 @@
+<form [formGroup]="todoForm" fxLayout="row" fxFlex>
+  <div fxLayout="column">
+    <mat-form-field>
+      <input matInput formControlName="code" placeholder="code" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="name" placeholder="name" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="type" placeholder="type" />
+    </mat-form-field>
+  </div>
+</form>

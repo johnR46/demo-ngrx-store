@@ -1,0 +1,25 @@
+<div fxLayout="column" fxFlex style="margin: 12px 24px 0px 24px;">
+  <div fxLayout="row">
+    <div fxFlex>Breadcrumb</div>
+    <div fxLayout="row" fxFlex fxLayoutAlign="end center" fxLayoutGap="24px">
+      <button
+        mat-raised-button
+        color="primary"
+        *ngIf="!(viewMode$ | async)"
+        (click)="trickChild()"
+      >
+        save
+      </button>
+      <button mat-raised-button color="warn" (click)="closePage()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  <app-todo-item-form
+    (update)="update($event)"
+    (save)="save($event)"
+    [viewMode]="viewMode$ | async"
+    [todoValue]="item$ | async"
+    [updateMode]="updateMode$ | async"
+  ></app-todo-item-form>
+</div>

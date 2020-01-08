@@ -1,0 +1,22 @@
+<div fxLayout="column" fxFlex style="margin: 12px 24px 0px 24px;">
+  <div fxLayout="row">
+    <div fxFlex>Breadcrumb</div>
+    <div fxLayout="row" fxFlex fxLayoutAlign="end center">
+      <button mat-raised-button (click)="goToCreatePage()">สร้าง</button>
+    </div>
+  </div>
+  <app-todo-criteria
+    [criteria]="criteria$ | async"
+    (search)="onSearch($event)"
+    (clear)="onClear($event)"
+  >
+  </app-todo-criteria>
+
+  <app-todo-result
+    fxFlex
+    [todos]="todos$ | async"
+    (view)="toView($event)"
+    (update)="toUpdate($event)"
+    style="margin-top: 12px;"
+  ></app-todo-result>
+</div>
