@@ -27,29 +27,21 @@ export class TodoService {
         return v;
       }
     });
-
     this.temp = update;
-    return Observable.create(observer => {
-      observer.next(value);
-      observer.complete();
-    });
+    return of(value);
   }
 
   create(value: Todo): Observable<Todo> {
     this.temp.push({ code: value.code, name: value.name, type: value.type });
-    // tslint:disable-next-line: deprecation
-    return Observable.create(observer => {
-      observer.next(value);
-      observer.complete();
-    });
-    // return this.http.post<Todo>(this.url + '/create', value);
-    // return of({ code: value.code, name: value.name, type: value.type });
+
+    return of(value);
   }
 
   search(val): Observable<Todo[]> {
-    return Observable.create(observer => {
-      observer.next(this.temp);
-      observer.complete();
-    });
+    console.log('search :', val.name);
+
+    const search = this.temp.filter(v => v.name === val.name);
+
+    return of(search);
   }
 }
