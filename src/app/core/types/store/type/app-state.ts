@@ -1,7 +1,9 @@
-import { SearchState } from './search-state';
-import { CrudState } from './crud-state';
+import { MODE } from '../constant/mode';
 
 export interface AppState {
-  search: SearchState;
-  crud: CrudState;
+  criteria?: {};
+  result?: {}[];
+  mode?: MODE;
+  activeIndex?: number;
+  formValue?: {};
 }

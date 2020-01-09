@@ -7,10 +7,7 @@ import { map, tap } from 'rxjs/operators';
 import { TodoItemFormComponent } from '../components/todo-item-form/todo-item-form.component';
 import { TodoService } from '../services/todo.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import {
-  UpdateTodoSuccess,
-  CreateTodoSuccess
-} from 'src/app/core/types/store/actions/crud.action';
+import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.service';
 
 @Component({
   selector: 'app-todo-list',
@@ -29,36 +26,18 @@ export class TodoListComponent implements OnInit {
     private todoService: TodoService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private store: Store<AppState>
+    private todoStore: TodoFacadeService
   ) {}
-  ngOnInit() {
-    this.item$ = this.store.select('crud').pipe(map(val => val.formValue));
-    this.viewMode$ = this.store
-      .select('crud')
-      .pipe(map(v => v.mode === 'VIEW'));
-
-    this.updateMode$ = this.store
-      .select('crud')
-      .pipe(map(v => v.mode === 'UPDATE'));
-  }
+  ngOnInit() {}
 
   update(valueValue: Todo) {
-    this.todoService.update(valueValue).subscribe(result => {
-      this.store.dispatch(
-        UpdateTodoSuccess({ searchState: { result: { value: [result] } } })
-      );
-    });
+    this.todoService.update(valueValue).subscribe(result => {});
     this.router.navigate([''], { relativeTo: this.activatedRoute });
   }
 
   save(value: Todo): void {
     this.todoService.create(value).subscribe(responCreate => {
-      this.store.dispatch(
-        CreateTodoSuccess({
-          searchState: { result: { value: [responCreate] } }
-        })
-      );
-
+      this.todoStore.createSuccess(responCreate);
       this.router.navigate([''], { relativeTo: this.activatedRoute });
     });
   }

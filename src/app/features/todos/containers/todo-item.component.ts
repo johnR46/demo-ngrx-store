@@ -7,16 +7,9 @@ import { Todo } from 'src/app/core/types/todo';
 import { TodoService } from '../services/todo.service';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/core/types/store/type/app-state';
-import {
-  CreateTodo,
-  ViewTodo,
-  UpdateTodo
-} from 'src/app/core/types/store/actions/crud.action';
-import {
-  searchTodo,
-  resetSearchTodo
-} from 'src/app/core/types/store/actions/search.action';
+
 import { map } from 'rxjs/operators';
+import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.service';
 
 @Component({
   selector: 'app-todo-item',
@@ -27,76 +20,35 @@ export class TodoItemComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private store: Store<AppState>,
-    private todoService: TodoService
+    private todoService: TodoService,
+    private todoStore: TodoFacadeService
   ) {}
 
   todos$: Observable<any>;
   criteria$: Observable<any>;
 
-  ngOnInit() {
-    this.todos$ = this.store
-      .select('search')
-      .pipe(map(val => val.result.value || []));
-
-    this.criteria$ = this.store
-      .select('search')
-      .pipe(map(v => v.criteria || ''));
-
-    this.criteria$.subscribe(v => console.log(v));
-  }
+  ngOnInit() {}
 
   onSearch(formCriteria: SearchCriteria): void {
-    this.todoService.search(formCriteria).subscribe((result: Todo[]) => {
-      this.store.dispatch(
-        searchTodo({
-          searchState: {
-            criteria: { value: formCriteria },
-            result: { value: result },
-            activeIndex: null
-          }
-        })
-      );
-    });
+    this.todoService.search(formCriteria).subscribe((result: Todo[]) => {});
   }
 
   onClear(): void {
-    this.store.dispatch(
-      resetSearchTodo({
-        searchState: {
-          criteria: { value: '' },
-          result: { value: null },
-          activeIndex: { value: null }
-        }
-      })
-    );
     console.log('clear');
   }
 
   goToCreatePage(): void {
-    this.store.dispatch(
-      CreateTodo({ crudState: { formValue: null, mode: 'CREATE' } })
-    );
+    this.todoStore.create();
     this.router.navigate(['./create'], { relativeTo: this.activatedRoute });
   }
 
   toView(viewValue: Todo): void {
-    this.store.dispatch(
-      ViewTodo({ crudState: { formValue: { value: viewValue }, mode: 'VIEW' } })
-    );
     this.router.navigate(['./view'], { relativeTo: this.activatedRoute });
   }
 
   toUpdate(val): void {
     const { index, todo } = val;
     console.log(index);
-
-    this.store.dispatch(
-      UpdateTodo({
-        crudState: { formValue: { value: todo }, mode: 'UPDATE' },
-        activeIndex: index
-      })
-    );
 
     this.router.navigate(['./update'], { relativeTo: this.activatedRoute });
   }

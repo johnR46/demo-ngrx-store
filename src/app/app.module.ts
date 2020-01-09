@@ -9,8 +9,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
-import { SearchReducer } from './core/types/store/reducers/search.reducer';
-import { CrudReducer } from './core/types/store/reducers/crud.reducer';
+import { toDoReducer } from './core/types/store/reducers/todo.reducers';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,7 +17,7 @@ import { CrudReducer } from './core/types/store/reducers/crud.reducer';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    StoreModule.forRoot({ search: SearchReducer, crud: CrudReducer }),
+    StoreModule.forRoot({ todo: toDoReducer }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production
