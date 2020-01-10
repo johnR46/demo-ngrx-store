@@ -34,11 +34,16 @@ export class TodoItemComponent implements OnInit {
   }
 
   onSearch(formCriteria: SearchCriteria): void {
-    this.todoService.search(formCriteria).subscribe((result: Todo[]) => {
-      console.log('resultSearch : ', result);
+    this.todoService.search(formCriteria).subscribe(
+      (result: Todo[]) => {
+        console.log('resultSearch : ', result);
 
-      this.todoStore.searchSuccess(formCriteria, result);
-    });
+        this.todoStore.searchSuccess(formCriteria, result);
+      },
+      () => {
+        this.todoStore.searchFailed(formCriteria);
+      }
+    );
   }
 
   onClear(): void {

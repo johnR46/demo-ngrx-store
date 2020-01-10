@@ -6,7 +6,8 @@ import {
   ResetTodo,
   ViewTodo,
   UpdateTodo,
-  UpdateTodoSuccess
+  UpdateTodoSuccess,
+  SearchTodoFailed
 } from '../actions/todo.actions';
 import { MODE } from '../constant/mode';
 
@@ -49,6 +50,12 @@ export const todoReducer = createReducer(
         criteria,
         result: [...result]
       }
+    );
+  }),
+  on(SearchTodoFailed, (oldState, { criteria: cc }) => {
+    return Object.assign(
+      {},
+      { ...oldState, activeIndex: null, criteria: cc, result: [] }
     );
   }),
   on(ResetTodo, oldState => {
