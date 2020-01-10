@@ -8,7 +8,8 @@ import {
   ResetTodo,
   ViewTodo,
   UpdateTodo,
-  UpdateTodoSuccess
+  UpdateTodoSuccess,
+  SearchTodoFailed
 } from '../actions/todo.actions';
 import { Observable } from 'rxjs';
 import { Todo } from '../../todo';
@@ -69,6 +70,10 @@ export class TodoFacadeService {
     this.store.dispatch(
       SearchTodoSuccess({ criteria: formCriteria, result: resultSearch })
     );
+  }
+
+  searchFailed(cri?): void {
+    this.store.dispatch(SearchTodoFailed({ criteria: cri }));
   }
 
   resetSearchAndFormValueAndMode(): void {

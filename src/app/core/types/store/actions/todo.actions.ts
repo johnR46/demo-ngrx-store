@@ -13,6 +13,11 @@ export const SearchTodoSuccess = createAction(
   props<{ criteria: {}; result: [] }>()
 );
 
+export const SearchTodoFailed = createAction(
+  '[Todo] SearchTodoFailed',
+  props<{ criteria?: {} }>()
+);
+
 export const ResetTodo = createAction('[Todo ResetTodo]');
 
 export const ViewTodo = createAction(

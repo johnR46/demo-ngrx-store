@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Todo } from 'src/app/core/types/todo';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +49,8 @@ export class TodoService {
 
     const search = this.temp.filter(v => v.name === val.name);
 
-    return of(search);
+    return Observable.create(v => {
+      return v.error(Error('searchFailed'));
+    });
   }
 }
