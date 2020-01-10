@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./todo-item-form.component.scss']
 })
 export class TodoItemFormComponent implements OnInit {
-  @Input() todoValue: any;
+  @Input() todoValue: Todo;
   @Input() viewMode: boolean;
   @Input() updateMode: boolean;
 
@@ -57,10 +57,6 @@ export class TodoItemFormComponent implements OnInit {
     if (this.viewMode) {
       this.todoForm.disable();
     }
-    const {
-      value: { code, name, type }
-    } = this.todoValue || { value: { code: '', name: '', type: '' } };
-
-    this.todoForm.patchValue({ code, name, type } || {});
+    this.todoForm.patchValue(this.todoValue || {});
   }
 }

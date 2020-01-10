@@ -15,18 +15,25 @@ export class TodoService {
 
   private url = 'http://localhost:8080/todos';
 
-  update(value: Todo): Observable<Todo> {
-    const update = this.temp.map(v => {
-      if (value.code === v.code) {
+  private updateArr(index, parm, cur: { code: any; name: any; type: any }[]) {
+    const c = cur.map((v, i) => {
+      if (i === index) {
         return {
-          code: value.code,
-          name: value.name,
-          type: value.type
+          code: parm.code,
+          name: parm.name,
+          type: parm.type
         };
       } else {
         return v;
       }
     });
+    return c;
+  }
+
+  update(index, value: Todo): Observable<Todo> {
+    console.log('index ; ', index);
+
+    const update = this.updateArr(index, value, this.temp);
     this.temp = update;
     return of(value);
   }

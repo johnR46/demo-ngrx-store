@@ -25,15 +25,24 @@ export class TodoItemComponent implements OnInit {
   ) {}
 
   todos$: Observable<any>;
-  criteria$: Observable<any>;
+  criteria$: Observable<SearchCriteria>;
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.todos$ = this.todoStore.getResultSearch();
+
+    this.criteria$ = this.todoStore.getCriteria();
+  }
 
   onSearch(formCriteria: SearchCriteria): void {
-    this.todoService.search(formCriteria).subscribe((result: Todo[]) => {});
+    this.todoService.search(formCriteria).subscribe((result: Todo[]) => {
+      console.log('resultSearch : ', result);
+
+      this.todoStore.searchSuccess(formCriteria, result);
+    });
   }
 
   onClear(): void {
+    this.todoStore.resetSearchAndFormValueAndMode();
     console.log('clear');
   }
 
@@ -43,13 +52,13 @@ export class TodoItemComponent implements OnInit {
   }
 
   toView(viewValue: Todo): void {
+    this.todoStore.viewFormValue(viewValue);
     this.router.navigate(['./view'], { relativeTo: this.activatedRoute });
   }
 
   toUpdate(val): void {
     const { index, todo } = val;
-    console.log(index);
-
+    this.todoStore.upDateTodo(index, todo);
     this.router.navigate(['./update'], { relativeTo: this.activatedRoute });
   }
 }

@@ -23,13 +23,9 @@ export class TodoCriteriaComponent implements OnInit {
 
   ngOnInit() {
     if (this.criteria) {
-      const {
-        value: { name }
-      } = this.criteria || { value: { name: '' } };
+      console.log('cri : ', this.criteria); // criteria:{criteria:{name:'}}
 
-      console.log(name);
-
-      this.searchForm.patchValue({ name } || {});
+      this.searchForm.patchValue(this.criteria || {});
     }
   }
 

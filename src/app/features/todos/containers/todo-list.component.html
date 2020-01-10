@@ -16,7 +16,7 @@
     </div>
   </div>
   <app-todo-item-form
-    (update)="update($event)"
+    (update)="updateSuccess($event)"
     (save)="save($event)"
     [viewMode]="viewMode$ | async"
     [todoValue]="item$ | async"
