@@ -1,14 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { Observable, pipe, of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { MODE } from 'src/app/core/types/store/constant/mode';
+import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.service';
 import { Todo } from 'src/app/core/types/todo';
-import { AppState } from 'src/app/core/types/store/type/app-state';
-import { map, tap, filter } from 'rxjs/operators';
 import { TodoItemFormComponent } from '../components/todo-item-form/todo-item-form.component';
 import { TodoService } from '../services/todo.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.service';
-import { MODE } from 'src/app/core/types/store/constant/mode';
 
 @Component({
   selector: 'app-todo-list',

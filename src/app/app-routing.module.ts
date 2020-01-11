@@ -7,7 +7,13 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/todos/todos.module').then(m => m.TodosModule)
   },
-  { path: '', pathMatch: 'full', redirectTo: 'todos' },
+  {
+    path: 'add-customer',
+    loadChildren: () =>
+      import('./features/add-customer/add-customer.module').then(
+        m => m.AddCustomerModule
+      )
+  },
   { path: '**', redirectTo: 'todos' }
 ];
 

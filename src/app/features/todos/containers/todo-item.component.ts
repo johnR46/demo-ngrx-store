@@ -1,15 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { SearchCriteria } from 'src/app/core/types/search-criteria';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
-
+import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.service';
 import { Todo } from 'src/app/core/types/todo';
 import { TodoService } from '../services/todo.service';
-import { Observable } from 'rxjs';
-import { AppState } from 'src/app/core/types/store/type/app-state';
-
-import { map } from 'rxjs/operators';
-import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.service';
 
 @Component({
   selector: 'app-todo-item',
