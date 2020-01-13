@@ -11,11 +11,13 @@ import {
   UpdateTodoSuccess,
   SearchTodoFailed
 } from '../actions/todo.actions';
-import { Observable } from 'rxjs';
+import { Observable, of, pipe } from 'rxjs';
 import { Todo } from '../../todo';
-import { map } from 'rxjs/operators';
+import { map, filter, tap } from 'rxjs/operators';
 import { MODE } from '../constant/mode';
 import { SearchCriteria } from '../../search-criteria';
+import { MenuId } from '../constant/menu-id';
+import { PrePareStore } from '../model/prepare-store';
 
 @Injectable({
   providedIn: 'root'
@@ -23,72 +25,81 @@ import { SearchCriteria } from '../../search-criteria';
 export class TodoFacadeService {
   constructor(private store: Store<AppState>) {}
 
-  getActiveIndex(): Observable<number> {
+  // getActiveIndex(): Observable<number> {
+  //   return this.store.pipe(
+  //     select('todo'),
+  //     map(({ activeIndex }) => activeIndex)
+  //   );
+  // }
+
+  // getCriteria(): Observable<SearchCriteria> {
+  //   return this.store.pipe(
+  //     select('todo'),
+  //     map(({ criteria }) => criteria)
+  //   );
+  // }
+
+  // getMode(): Observable<MODE> {
+  //   return this.store.pipe(
+  //     select('todo'),
+  //     map(({ mode }) => mode)
+  //   );
+  // }
+
+  getResultSearch(featKey: MenuId): Observable<Todo[] | any> {
     return this.store.pipe(
       select('todo'),
-      map(({ activeIndex }) => activeIndex)
+      map(Value =>
+        Object.keys(Value)
+          .map(key => {
+            if (Value[key].getFeatMenu() === featKey) {
+              return Value[key];
+            }
+          })
+          .filter(noValue => noValue)
+      ),
+      map(result => result[0].getResult())
     );
   }
 
-  getCriteria(): Observable<SearchCriteria> {
-    return this.store.pipe(
-      select('todo'),
-      map(({ criteria }) => criteria)
-    );
+  // getFormValue(): Observable<Todo> {
+  //   return this.store.pipe(
+  //     select('todo'),
+  //     map(({ formValue }) => formValue)
+  //   );
+  // }
+
+  create(menu: string): void {
+    this.store.dispatch(CreateTodo({ featKey: menu }));
   }
 
-  getMode(): Observable<MODE> {
-    return this.store.pipe(
-      select('todo'),
-      map(({ mode }) => mode)
-    );
+  createSuccess(menu: string, value?): void {
+    this.store.dispatch(CreateTodoSuccess({ featKey: menu, formValue: value }));
   }
 
-  getResultSearch(): Observable<Todo[]> {
-    return this.store.pipe(
-      select('todo'),
-      map(({ result }) => result)
-    );
-  }
+  // searchSuccess(formCriteria, resultSearch): void {
+  //   this.store.dispatch(
+  //     SearchTodoSuccess({ criteria: formCriteria, result: resultSearch })
+  //   );
+  // }
 
-  getFormValue(): Observable<Todo> {
-    return this.store.pipe(
-      select('todo'),
-      map(({ formValue }) => formValue)
-    );
-  }
+  // searchFailed(cri?): void {
+  //   this.store.dispatch(SearchTodoFailed({ criteria: cri }));
+  // }
 
-  create(): void {
-    this.store.dispatch(CreateTodo());
-  }
+  // resetSearchAndFormValueAndMode(): void {
+  //   this.store.dispatch(ResetTodo());
+  // }
 
-  createSuccess(value?): void {
-    this.store.dispatch(CreateTodoSuccess({ formValue: value }));
-  }
+  // viewFormValue(value): void {
+  //   this.store.dispatch(ViewTodo({ formValue: value }));
+  // }
 
-  searchSuccess(formCriteria, resultSearch): void {
-    this.store.dispatch(
-      SearchTodoSuccess({ criteria: formCriteria, result: resultSearch })
-    );
-  }
+  // upDateTodo(index, value): void {
+  //   this.store.dispatch(UpdateTodo({ activeIndex: index, formValue: value }));
+  // }
 
-  searchFailed(cri?): void {
-    this.store.dispatch(SearchTodoFailed({ criteria: cri }));
-  }
-
-  resetSearchAndFormValueAndMode(): void {
-    this.store.dispatch(ResetTodo());
-  }
-
-  viewFormValue(value): void {
-    this.store.dispatch(ViewTodo({ formValue: value }));
-  }
-
-  upDateTodo(index, value): void {
-    this.store.dispatch(UpdateTodo({ activeIndex: index, formValue: value }));
-  }
-
-  upDateTodoSuccess(value?): void {
-    this.store.dispatch(UpdateTodoSuccess({ formValue: value }));
-  }
+  // upDateTodoSuccess(value?): void {
+  //   this.store.dispatch(UpdateTodoSuccess({ formValue: value }));
+  // }
 }

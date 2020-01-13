@@ -1,11 +1,7 @@
-import { MODE } from '../constant/mode';
+import { PrePareStore } from '../model/prepare-store';
 
 export interface AppState {
   todo: {
-    criteria?: {};
-    result?: {}[];
-    mode?: MODE;
-    activeIndex?: number;
-    formValue?: {};
+    initialStore: PrePareStore[];
   };
 }

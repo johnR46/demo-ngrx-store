@@ -1,5 +1,1 @@
-export enum MODE {
-  'CREATE' = 'CREATE',
-  'UPDATE' = 'UPDATE',
-  'VIEW' = 'VIEW'
-}
+export type MODE = 'CREATE' | 'UPDATE' | 'VIEW' | 'INACTIVE' | 'NONE';

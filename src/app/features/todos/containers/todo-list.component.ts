@@ -7,6 +7,7 @@ import { TodoFacadeService } from 'src/app/core/types/store/service/todo-facade.
 import { Todo } from 'src/app/core/types/todo';
 import { TodoItemFormComponent } from '../components/todo-item-form/todo-item-form.component';
 import { TodoService } from '../services/todo.service';
+import { MenuId } from 'src/app/core/types/store/constant/menu-id';
 
 @Component({
   selector: 'app-todo-list',
@@ -26,35 +27,33 @@ export class TodoListComponent implements OnInit {
     private todoService: TodoService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private todoStore: TodoFacadeService
+    private todoStore: TodoFacadeService // private todoStore: TodoFacadeService
   ) {}
   ngOnInit() {
-    this.item$ = this.todoStore.getFormValue();
-
-    this.viewMode$ = this.todoStore.getMode().pipe(
-      filter(v => v === MODE.VIEW),
-      map(() => true)
-    );
-
-    this.updateMode$ = this.todoStore.getMode().pipe(
-      filter(v => v === MODE.UPDATE),
-      map(() => true)
-    );
-    this.todoStore.getActiveIndex().subscribe(v => {
-      this.activeIndex = v;
-    });
+    // this.item$ = this.todoStore.getFormValue();
+    // this.viewMode$ = this.todoStore.getMode().pipe(
+    //   filter(v => v === MODE.VIEW),
+    //   map(() => true)
+    // );
+    // this.updateMode$ = this.todoStore.getMode().pipe(
+    //   filter(v => v === MODE.UPDATE),
+    //   map(() => true)
+    // );
+    // this.todoStore.getActiveIndex().subscribe(v => {
+    //   this.activeIndex = v;
+    // });
   }
 
   updateSuccess(valueValue: Todo) {
     this.todoService.update(this.activeIndex, valueValue).subscribe(result => {
-      this.todoStore.upDateTodoSuccess(valueValue);
+      // this.todoStore.upDateTodoSuccess(valueValue);
     });
     this.router.navigate([''], { relativeTo: this.activatedRoute });
   }
 
   save(value: Todo): void {
     this.todoService.create(value).subscribe(responCreate => {
-      this.todoStore.createSuccess(responCreate);
+      this.todoStore.createSuccess(MenuId.FEATONE, responCreate);
       this.router.navigate([''], { relativeTo: this.activatedRoute });
     });
   }

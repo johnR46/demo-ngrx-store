@@ -1,36 +1,39 @@
 import { createAction, props } from '@ngrx/store';
 import { MODE } from '../constant/mode';
 
-export const CreateTodo = createAction('[Todo] CreateTodo');
+export const CreateTodo = createAction(
+  '[Todo] CreateTodo',
+  props<{ featKey: string }>()
+);
 
 export const CreateTodoSuccess = createAction(
   '[Todo] CreateTodoSuccess',
-  props<{ formValue: {} }>()
+  props<{ featKey: string; formValue: {} }>()
 );
 
 export const SearchTodoSuccess = createAction(
   '[Todo] SearchTodoSuccess',
-  props<{ criteria: {}; result: [] }>()
+  props<{ featKey: string; criteria: {}; result: [] }>()
 );
 
 export const SearchTodoFailed = createAction(
   '[Todo] SearchTodoFailed',
-  props<{ criteria?: {} }>()
+  props<{ featKey: string; criteria?: {} }>()
 );
 
 export const ResetTodo = createAction('[Todo ResetTodo]');
 
 export const ViewTodo = createAction(
   '[Todo] ViewTodo',
-  props<{ formValue: {} }>()
+  props<{ featKey: string; formValue: {} }>()
 );
 
 export const UpdateTodo = createAction(
   '[Todo] UpdateTodo ',
-  props<{ activeIndex: number; formValue: {} }>()
+  props<{ featKey: string; activeIndex: number; formValue: {} }>()
 );
 
 export const UpdateTodoSuccess = createAction(
   '[Todo] UpdateTodoSuccess ',
-  props<{ formValue: {} }>()
+  props<{ featKey: string; formValue: {} }>()
 );

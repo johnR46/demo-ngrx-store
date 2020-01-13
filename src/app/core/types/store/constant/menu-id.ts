@@ -1,0 +1,7 @@
+export enum MenuId {
+  'FEATONE' = 'FEATONE',
+  'FEATTWO' = 'FEATTWO',
+  'FEATTHREE' = 'FEATTHREE',
+  'FEAFOUR' = 'FEAFOUR',
+  'FEATFIVE' = 'FEATFIVE'
+}
