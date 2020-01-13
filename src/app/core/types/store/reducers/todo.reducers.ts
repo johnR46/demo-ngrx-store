@@ -9,11 +9,28 @@ import {
   UpdateTodoSuccess,
   SearchTodoFailed
 } from '../actions/todo.actions';
-import { MODE } from '../constant/mode';
+import {
+  convertEnumFeatKeyToPropFeatKey,
+  initialPropFeatKey,
+  initialAllStoreWithFeatKey
+} from '../prepares/initial-store';
+import {
+  selectStoreWithFeatKey,
+  updateModeInStore,
+  updatedGlobalTodoStore,
+  InsertTopResultWithFormValueInStore,
+  updateCriteriaInStore,
+  ResetAndInsertResultInStore,
+  prepareFeatStore,
+  updateFormValueInStore,
+  updateActiveIndexInStore,
+  updateResultWithIndex
+} from '../util/utilStore';
 import { MenuId } from '../constant/menu-id';
-import { FeatStore } from '../model/feat-store';
-import { PrePareStore } from '../model/prepare-store';
-import { initialStore } from '../prepares/initial-store';
+
+const allMenuIdKey = convertEnumFeatKeyToPropFeatKey();
+const allPropKey = initialPropFeatKey(allMenuIdKey);
+const allInitialStore = initialAllStoreWithFeatKey(allPropKey);
 
 /*
 
@@ -25,112 +42,122 @@ on(ActionA,ActionB,state => {   เกิด A   หรีอ  B  จะทำ  
 */
 
 export const todoReducer = createReducer(
-  initialStore,
+  allInitialStore,
   on(CreateTodo, (oldState, { featKey }) => {
-    const selectWithKey = oldState.filter(key => key.getFeatMenu() === featKey);
-    const oldStore = selectWithKey[0];
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
+    const updateFormValue = updateFormValueInStore({}, selectWithKey);
+    const updateActiveIndex = updateActiveIndexInStore(-1, updateFormValue);
+    const updateMode = updateModeInStore('CREATE', updateActiveIndex);
 
-    const updated = new FeatStore(
-      oldStore.getFormValue(),
-      oldStore.getActiveIndex(),
-      'CREATE',
-      oldStore.getResult()
+    const updateResult = ResetAndInsertResultInStore(
+      updateMode.getResult(),
+      updateMode
     );
-
-    const newprepare = new PrePareStore(featKey, updated);
-
-    const newStateAfterupdate = oldState.map(value => {
-      if (value.getFeatMenu() === featKey) {
-        return newprepare;
-      } else {
-        return value;
-      }
-    });
-
-    return newStateAfterupdate;
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updateResult,
+      oldState
+    );
+    return newStateAfterUpdateMode;
   }),
   on(CreateTodoSuccess, (oldState, { featKey, formValue }) => {
-    const selectWithKey = oldState.filter(key => key.getFeatMenu() === featKey);
-    const oldStore = selectWithKey[0];
-    const oldResult = oldStore.getResult();
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
 
-    const newResult = [formValue].concat(oldResult);
+    const updateResult = InsertTopResultWithFormValueInStore(
+      formValue,
+      selectWithKey
+    );
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updateResult,
+      oldState
+    );
+    return newStateAfterUpdateMode;
+  }),
+  on(SearchTodoSuccess, (oldState, { featKey, criteria, result }) => {
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
+    const updatedCriteria = updateCriteriaInStore(criteria, selectWithKey);
+    const updateResult = ResetAndInsertResultInStore(result, updatedCriteria);
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updateResult,
+      oldState
+    );
+    console.log(newStateAfterUpdateMode);
+    return newStateAfterUpdateMode;
+  }),
+  on(SearchTodoFailed, (oldState, { featKey, criteria }) => {
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
+    const updatedCriteria = updateCriteriaInStore(criteria, selectWithKey);
+    const updateResult = ResetAndInsertResultInStore([], updatedCriteria);
 
-    const updated = new FeatStore(
-      oldStore.getFormValue(),
-      oldStore.getActiveIndex(),
-      oldStore.getMode(),
-      newResult
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updateResult,
+      oldState
+    );
+    return newStateAfterUpdateMode;
+  }),
+  on(ResetTodo, (oldState, { featKey }) => {
+    const resetFeateStore = prepareFeatStore();
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      resetFeateStore,
+      oldState
+    );
+    return newStateAfterUpdateMode;
+  }),
+  on(ViewTodo, (oldState, { featKey, formValue }) => {
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
+    const updateMode = updateModeInStore('VIEW', selectWithKey);
+    const updateFormValue = updateFormValueInStore(formValue, updateMode);
+
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updateFormValue,
+      oldState
+    );
+    return newStateAfterUpdateMode;
+  }),
+  on(UpdateTodo, (oldState, { featKey, activeIndex, formValue }) => {
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
+    const updateMode = updateModeInStore('UPDATE', selectWithKey);
+    const updateFormValue = updateFormValueInStore(formValue, updateMode);
+    const updateActiveIndex = updateActiveIndexInStore(
+      activeIndex,
+      updateFormValue
     );
 
-    const newprepare = new PrePareStore(featKey, updated);
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updateActiveIndex,
+      oldState
+    );
+    return newStateAfterUpdateMode;
+  }),
 
-    const newStateAfterupdate = oldState.map(value => {
-      if (value.getFeatMenu() === featKey) {
-        return newprepare;
-      } else {
-        return value;
-      }
-    });
-
-    return newStateAfterupdate;
+  on(UpdateTodoSuccess, (oldState, { featKey, formValue }) => {
+    const selectWithKey = selectStoreWithFeatKey(featKey, oldState);
+    const oldResult = selectWithKey.getResult();
+    const indexWithUpdate = selectWithKey.getActiveIndex();
+    const updateResult = updateResultWithIndex(
+      indexWithUpdate,
+      formValue,
+      oldResult
+    );
+    const updatedFinish = ResetAndInsertResultInStore(
+      updateResult,
+      selectWithKey
+    );
+    const newStateAfterUpdateMode = updatedGlobalTodoStore(
+      featKey,
+      updatedFinish,
+      oldState
+    );
+    return newStateAfterUpdateMode;
   })
-  // on(SearchTodoFailed, (oldState, { criteria: cc }) => {
-  //   return Object.assign(
-  //     {},
-  //     { ...oldState, activeIndex: null, criteria: cc, result: [] }
-  //   );
-  // }),
-  // on(ResetTodo, oldState => {
-  //   return Object.assign({}, { ...oldState, ...initialState });
-  // }),
-  // on(ViewTodo, (state, { formValue }) => {
-  //   const oldState = state;
-  //   return Object.assign(
-  //     {},
-  //     { ...oldState, mode: MODE.VIEW, formValue: { ...formValue } }
-  //   );
-  // }),
-  // on(UpdateTodo, (oldState, { activeIndex: index, formValue }) => {
-  //   return Object.assign(
-  //     {},
-  //     {
-  //       ...oldState,
-  //       activeIndex: index,
-  //       mode: MODE.UPDATE,
-  //       formValue: { ...formValue }
-  //     }
-  //   );
-  // }),
-  // on(UpdateTodoSuccess, (oldState, { formValue }) => {
-  //   // return {};
-  //   const { activeIndex, result } = oldState;
-  //   return Object.assign(
-  //     {},
-  //     { ...oldState, result: updateArr(activeIndex, formValue, result) }
-  //   );
-  // })
 );
 
 export function toDoReducer(state, action) {
   return todoReducer(state, action);
 }
-
-// export function updateArr(
-//   index,
-//   parm,
-//   cur: { code: any; name: any; type: any }[]
-// ) {
-//   const c = cur.map((v, i) => {
-//     if (i === index) {
-//       return {
-//         code: parm.code,
-//         name: parm.name,
-//         type: parm.type
-//       };
-//     } else {
-//       return v;
-//     }
-//   });
-//   return c;
-// }
