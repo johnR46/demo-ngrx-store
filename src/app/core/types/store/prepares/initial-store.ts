@@ -1,17 +1,30 @@
-import { MenuId } from '../constant/menu-id';
-import { PrePareStore } from '../model/prepare-store';
+import { MenuId } from "../constant/menu-id";
+import { TodoStore } from '../type/todo-store';
 import { FeatStore } from '../model/feat-store';
 
-const prepareAllFeatKey = [MenuId].reduce((prv, cur) => {
-  return { ...prv, ...cur };
-}, {});
+export function convertEnumFeatKeyToPropFeatKey(): Object {
+  const result = [MenuId].reduce((prv, cur) => {
+    return { ...prv, ...cur };
+  }, {});
+  return result;
+}
 
-const initialKey = Object.keys(prepareAllFeatKey).map(k => {
-  return k;
-});
 
-const initiaValue = new FeatStore({}, -1, 'NONE', []);
+export function initialPropFeatKey(menuKey: Object): string[] {
+  const initialPropFeatKey = Object.keys(menuKey).map(v => {
+    return v;
+  });
+  return initialPropFeatKey;
+}
 
-export const initialStore = initialKey.map(k => {
-  return new PrePareStore(k, initiaValue);
-});
+
+export function initialAllStoreWithFeatKey(featKey: string[]): TodoStore[] {
+  const result: TodoStore[] = featKey.map(prop => {
+    return {
+      [prop]: new FeatStore({}, {}, -1, 'NONE', [])
+    };
+  });
+  return result;
+}
+
+
