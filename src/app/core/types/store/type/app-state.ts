@@ -1,7 +1,7 @@
-import { PrePareStore } from '../model/prepare-store';
+import { TodoStore } from './todo-store';
 
 export interface AppState {
   todo: {
-    initialStore: PrePareStore[];
+    store: TodoStore[]
   };
 }
