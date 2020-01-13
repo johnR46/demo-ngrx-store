@@ -17,89 +17,115 @@ import { map, filter, tap } from 'rxjs/operators';
 import { MODE } from '../constant/mode';
 import { SearchCriteria } from '../../search-criteria';
 import { MenuId } from '../constant/menu-id';
-import { PrePareStore } from '../model/prepare-store';
+import { TodoStore } from '../type/todo-store';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoFacadeService {
-  constructor(private store: Store<AppState>) {}
+  stores$: Observable<{ store: TodoStore[] }>;
+  constructor(private store: Store<AppState>) {
+    this.stores$ = store.pipe(select('todo'));
+  }
 
-  // getActiveIndex(): Observable<number> {
-  //   return this.store.pipe(
-  //     select('todo'),
-  //     map(({ activeIndex }) => activeIndex)
-  //   );
-  // }
-
-  // getCriteria(): Observable<SearchCriteria> {
-  //   return this.store.pipe(
-  //     select('todo'),
-  //     map(({ criteria }) => criteria)
-  //   );
-  // }
-
-  // getMode(): Observable<MODE> {
-  //   return this.store.pipe(
-  //     select('todo'),
-  //     map(({ mode }) => mode)
-  //   );
-  // }
-
-  getResultSearch(featKey: MenuId): Observable<Todo[] | any> {
-    return this.store.pipe(
-      select('todo'),
-      map(Value =>
-        Object.keys(Value)
-          .map(key => {
-            if (Value[key].getFeatMenu() === featKey) {
-              return Value[key];
-            }
-          })
-          .filter(noValue => noValue)
-      ),
-      map(result => result[0].getResult())
+  getActiveIndex(featKey: MenuId): Observable<number> {
+    return this.stores$.pipe(
+      map(value =>
+        Object.keys(value)
+          .map(key => value[key][featKey])
+          .filter(noMatch => noMatch)
+          .map(result => result.getActiveIndex())
+          .reduce(index => index)
+      )
     );
   }
 
-  // getFormValue(): Observable<Todo> {
-  //   return this.store.pipe(
-  //     select('todo'),
-  //     map(({ formValue }) => formValue)
-  //   );
-  // }
+  getFormValue(featKey: MenuId): Observable<Todo> {
+    return this.stores$.pipe(
+      map(value =>
+        Object.keys(value)
+          .map(key => value[key][featKey])
+          .filter(noMatch => noMatch)
+          .map(result => result.getFormValue())
+          .reduce(formValue => formValue)
+      )
+    );
+  }
 
-  create(menu: string): void {
+  getCriteria(featKey: MenuId): Observable<SearchCriteria> {
+    return this.stores$.pipe(
+      map(value =>
+        Object.keys(value)
+          .map(key => value[key][featKey])
+          .filter(noMatch => noMatch)
+          .map(result => result.getCriteria())
+          .reduce(criteria => criteria)
+      ),
+      tap(v => console.log(v))
+    );
+  }
+
+  getMode(featKey: MenuId): Observable<MODE> {
+    return this.stores$.pipe(
+      map(value =>
+        Object.keys(value)
+          .map(key => value[key][featKey])
+          .filter(noMatch => noMatch)
+          .map(mode => mode.getMode())
+          .reduce(v => v)
+      )
+    );
+  }
+
+  getResultSearch(featKey: MenuId): Observable<Todo[] | any> {
+    return this.stores$.pipe(
+      map(value =>
+        Object.keys(value)
+          .map(key => value[key][featKey])
+          .filter(noMatch => noMatch)
+          .map(result => result.getResult())
+          .reduce((prv, cur) => [...prv, ...cur], [])
+      )
+    );
+  }
+
+  create(menu: MenuId): void {
     this.store.dispatch(CreateTodo({ featKey: menu }));
   }
 
-  createSuccess(menu: string, value?): void {
+  createSuccess(menu: MenuId, value?): void {
     this.store.dispatch(CreateTodoSuccess({ featKey: menu, formValue: value }));
   }
 
-  // searchSuccess(formCriteria, resultSearch): void {
-  //   this.store.dispatch(
-  //     SearchTodoSuccess({ criteria: formCriteria, result: resultSearch })
-  //   );
-  // }
+  searchSuccess(menu: MenuId, formCriteria, resultSearch: Array<Object>): void {
+    this.store.dispatch(
+      SearchTodoSuccess({
+        featKey: menu,
+        criteria: formCriteria,
+        result: resultSearch
+      })
+    );
+  }
 
-  // searchFailed(cri?): void {
-  //   this.store.dispatch(SearchTodoFailed({ criteria: cri }));
-  // }
+  searchFailed(key: MenuId, cri?: Object): void {
+    this.store.dispatch(SearchTodoFailed({ featKey: key, criteria: cri }));
+  }
 
-  // resetSearchAndFormValueAndMode(): void {
-  //   this.store.dispatch(ResetTodo());
-  // }
+  resetSearchAndFormValueAndMode(key: MenuId): void {
+    this.store.dispatch(ResetTodo({ featKey: key }));
+  }
 
-  // viewFormValue(value): void {
-  //   this.store.dispatch(ViewTodo({ formValue: value }));
-  // }
+  viewFormValue(menu: MenuId, value: Object): void {
+    this.store.dispatch(ViewTodo({ featKey: menu, formValue: value }));
+  }
 
-  // upDateTodo(index, value): void {
-  //   this.store.dispatch(UpdateTodo({ activeIndex: index, formValue: value }));
-  // }
+  upDateTodo(menu: MenuId, index: number, value): void {
+    this.store.dispatch(
+      UpdateTodo({ featKey: menu, activeIndex: index, formValue: value })
+    );
+  }
 
-  // upDateTodoSuccess(value?): void {
-  //   this.store.dispatch(UpdateTodoSuccess({ formValue: value }));
-  // }
+  upDateTodoSuccess(menu: MenuId, value?): void {
+    this.store.dispatch(UpdateTodoSuccess({ featKey: menu, formValue: value }));
+  }
 }
