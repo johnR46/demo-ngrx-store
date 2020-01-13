@@ -21,7 +21,6 @@ export class TodoListComponent implements OnInit {
   viewMode$: Observable<boolean>;
   updateMode$: Observable<boolean>;
   activeIndex: number;
-  // updateMode$: Observable<boolean>;
 
   constructor(
     private todoService: TodoService,
@@ -30,23 +29,26 @@ export class TodoListComponent implements OnInit {
     private todoStore: TodoFacadeService // private todoStore: TodoFacadeService
   ) {}
   ngOnInit() {
+    this.todoStore.getMode(MenuId.FEATONE).subscribe(v => console.log(v));
+
     // this.item$ = this.todoStore.getFormValue();
-    // this.viewMode$ = this.todoStore.getMode().pipe(
-    //   filter(v => v === MODE.VIEW),
-    //   map(() => true)
-    // );
-    // this.updateMode$ = this.todoStore.getMode().pipe(
-    //   filter(v => v === MODE.UPDATE),
-    //   map(() => true)
-    // );
-    // this.todoStore.getActiveIndex().subscribe(v => {
-    //   this.activeIndex = v;
-    // });
+    this.item$ = this.todoStore.getFormValue(MenuId.FEATONE);
+    this.viewMode$ = this.todoStore.getMode(MenuId.FEATONE).pipe(
+      filter(v => v === 'VIEW'),
+      map(() => true)
+    );
+    this.updateMode$ = this.todoStore.getMode(MenuId.FEATONE).pipe(
+      filter(v => v === 'UPDATE'),
+      map(() => true)
+    );
+    this.todoStore.getActiveIndex(MenuId.FEATONE).subscribe(v => {
+      this.activeIndex = v;
+    });
   }
 
-  updateSuccess(valueValue: Todo) {
-    this.todoService.update(this.activeIndex, valueValue).subscribe(result => {
-      // this.todoStore.upDateTodoSuccess(valueValue);
+  updateSuccess(formValue: Todo) {
+    this.todoService.update(this.activeIndex, formValue).subscribe(result => {
+      this.todoStore.upDateTodoSuccess(MenuId.FEATONE, formValue);
     });
     this.router.navigate([''], { relativeTo: this.activatedRoute });
   }

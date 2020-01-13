@@ -49,8 +49,9 @@ export class TodoService {
 
     const search = this.temp.filter(v => v.name === val.name);
 
-    return Observable.create(v => {
-      return v.error(Error('searchFailed'));
-    });
+    return of(search);
+    // return Observable.create(v => {
+    //   return v.error(Error('searchFailed'));
+    // });
   }
 }
